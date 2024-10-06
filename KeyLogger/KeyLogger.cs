@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,6 +17,15 @@ namespace MonProjetCSharp
                 cts.Cancel();
             };
 
+            // Chemin du fichier de sortie
+            string outputFilePath = "OUTPUT.txt";
+
+            // Vider le fichier de sortie s'il existe déjà
+            if (File.Exists(outputFilePath))
+            {
+                File.WriteAllText(outputFilePath, string.Empty);
+            }
+
             // Boucle infinie pour lire l'entrée de l'utilisateur
             while (true)
             {
@@ -29,6 +39,9 @@ namespace MonProjetCSharp
 
                     // Afficher l'entrée de l'utilisateur
                     Console.WriteLine("Vous avez entré : " + input);
+
+                    // Écrire l'entrée de l'utilisateur dans le fichier de sortie
+                    File.AppendAllText(outputFilePath, input + Environment.NewLine);
                 }
                 catch (OperationCanceledException)
                 {
