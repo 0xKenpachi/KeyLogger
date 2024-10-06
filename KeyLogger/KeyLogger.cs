@@ -26,27 +26,28 @@ namespace MonProjetCSharp
                 File.WriteAllText(outputFilePath, string.Empty);
             }
 
-            // Boucle infinie pour lire l'entrée de l'utilisateur
+            // Boucle infinie pour capturer les touches pressées
             while (true)
             {
                 try
                 {
-                    // Demander à l'utilisateur d'entrer du texte
-                    Console.WriteLine("Veuillez entrer du texte (appuyez sur CTRL + C pour quitter) :");
+                    // Vérifier si une touche a été pressée
+                    if (Console.KeyAvailable)
+                    {
+                        // Lire la touche pressée
+                        ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: true);
 
-                    // Lire l'entrée de l'utilisateur et la stocker dans une variable
-                    string input = await Task.Run(() => Console.ReadLine(), cts.Token);
+                        // Écrire la touche pressée dans le fichier de sortie
+                        File.AppendAllText(outputFilePath, keyInfo.KeyChar.ToString());
+                    }
 
-                    // Afficher l'entrée de l'utilisateur
-                    Console.WriteLine("Vous avez entré : " + input);
-
-                    // Écrire l'entrée de l'utilisateur dans le fichier de sortie
-                    File.AppendAllText(outputFilePath, input + Environment.NewLine);
+                    // Attendre un court moment pour éviter de surcharger le CPU
+                    await Task.Delay(100, cts.Token);
                 }
                 catch (OperationCanceledException)
                 {
                     // L'utilisateur a appuyé sur CTRL + C
-                    Console.WriteLine("Programme arrêté par l'utilisateur.");
+                    Console.WriteLine("\nProgramme arrêté par l'utilisateur.");
                     break;
                 }
             }
